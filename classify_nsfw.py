@@ -14,56 +14,85 @@ IMAGE_LOADER_TENSORFLOW = "tensorflow"
 IMAGE_LOADER_YAHOO = "yahoo"
 
 
-def main(argv):
-    parser = argparse.ArgumentParser()
 
-    parser.add_argument("input_file", help="Path to the input image.\
-                        Only jpeg images are supported.")
 
-    parser.add_argument("-m", "--model_weights", required=True,
-                        help="Path to trained model weights file")
+class NSFW:
 
-    parser.add_argument("-l", "--image_loader",
-                        default=IMAGE_LOADER_YAHOO,
-                        help="image loading mechanism",
-                        choices=[IMAGE_LOADER_YAHOO, IMAGE_LOADER_TENSORFLOW])
+    def __init__(self):
+        self.fn_load_image = None
+        self.sess = None
+        self.model = OpenNsfwModel()
 
-    parser.add_argument("-i", "--input_type",
-                        default=InputType.TENSOR.name.lower(),
-                        help="input type",
-                        choices=[InputType.TENSOR.name.lower(),
-                                 InputType.BASE64_JPEG.name.lower()])
+    def session_run(self, input_file):
+        with tf.compat.v1.Session() as self.sess:
+            input_type = InputType[InputType.TENSOR.name.lower().upper()]
+            self.model.build(weights_path='data/open_nsfw-weights.npy', input_type=input_type)
 
-    args = parser.parse_args()
+            if input_type == InputType.TENSOR:
+                if IMAGE_LOADER_YAHOO == IMAGE_LOADER_TENSORFLOW:
+                    self.fn_load_image = create_tensorflow_image_loader(tf.Session(graph=tf.Graph()))
+                else:
+                    self.fn_load_image = create_yahoo_image_loader()
+            elif input_type == InputType.BASE64_JPEG:
+                import base64
+                self.fn_load_image = lambda filename: np.array([base64.urlsafe_b64encode(open(filename, "rb").read())])
 
+            self.sess.run(tf.compat.v1.global_variables_initializer())
+            image = self.fn_load_image(input_file)
+            predictions = self.sess.run(self.model.predictions, feed_dict={self.model.input: image})
+            print(float(predictions[0][1]), type(float(predictions[0][1])))
+            if float(predictions[0][1]) >= 0.8 :
+                print("-------------")
+
+
+    def predict(self, input_file):
+        image = self.fn_load_image(input_file)
+        predictions = self.sess.run(self.model.predictions, feed_dict={self.model.input: image})
+
+        #print("Results for '{}'".format(input_file))
+        #print("\tSFW score:\t{}\n\tNSFW score:\t{}".format(*predictions[0]))
+        print(float(predictions[0][1]), type(float(predictions[0][1])))
+        if float(predictions[0][1]) >= 0.8 :
+            print("-------------")
+
+
+
+def main(input_file):
     model = OpenNsfwModel()
 
     with tf.compat.v1.Session() as sess:
+        input_type = InputType[InputType.TENSOR.name.lower().upper()]
+        model.build(weights_path='data/open_nsfw-weights.npy', input_type=input_type)
 
-        input_type = InputType[args.input_type.upper()]
-        model.build(weights_path=args.model_weights, input_type=input_type)
-
-        fn_load_image = None
+        self.fn_load_image = None
 
         if input_type == InputType.TENSOR:
-            if args.image_loader == IMAGE_LOADER_TENSORFLOW:
-                fn_load_image = create_tensorflow_image_loader(tf.Session(graph=tf.Graph()))
+            if IMAGE_LOADER_YAHOO == IMAGE_LOADER_TENSORFLOW:
+                self.fn_load_image = create_tensorflow_image_loader(tf.Session(graph=tf.Graph()))
             else:
-                fn_load_image = create_yahoo_image_loader()
+                self.fn_load_image = create_yahoo_image_loader()
         elif input_type == InputType.BASE64_JPEG:
             import base64
-            fn_load_image = lambda filename: np.array([base64.urlsafe_b64encode(open(filename, "rb").read())])
+            self.fn_load_image = lambda filename: np.array([base64.urlsafe_b64encode(open(filename, "rb").read())])
 
         sess.run(tf.compat.v1.global_variables_initializer())
+        image = self.fn_load_image(input_file)
+        predictions = sess.run(model.predictions, feed_dict={model.input: image})
 
-        image = fn_load_image(args.input_file)
+        #print("Results for '{}'".format(input_file))
+        #print("\tSFW score:\t{}\n\tNSFW score:\t{}".format(*predictions[0]))
+        print(float(predictions[0][1]), type(float(predictions[0][1])))
+        if float(predictions[0][1]) >= 0.8 :
+            print("-------------")
 
-        predictions = \
-            sess.run(model.predictions,
-                     feed_dict={model.input: image})
 
-        print("Results for '{}'".format(args.input_file))
-        print("\tSFW score:\t{}\n\tNSFW score:\t{}".format(*predictions[0]))
+
 
 if __name__ == "__main__":
-    main(sys.argv)
+    # main(sys.argv)
+    # main(r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\img\test2.jpg')
+
+    nsfw = NSFW()
+    nsfw.session_run(r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\img\test2.jpg')
+    #nsfw.predict(r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\img\test2.jpg')
+
