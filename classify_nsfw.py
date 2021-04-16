@@ -50,7 +50,6 @@ class NSFW:
                 print('网站 = ', str(d[0]), '图片数量:', len(urls))
                 if len(urls)>0:
                     for url in urls:
-                        print(url)
                         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'}
                         try:
                             res = requests.get(url, headers=headers, timeout=20)
@@ -67,7 +66,7 @@ class NSFW:
                         predictions = self.sess.run(self.model.predictions, feed_dict={self.model.input: image})
                         # print(float(predictions[0][1]), type(float(predictions[0][1])))
                         if float(predictions[0][1]) >= 0.8:
-                            print('图片 = ', url, '  结果：True', )
+                            print('------图片 = ', url, '  结果：True', )
                             data_result.append(str(d[0]) + '\tTrue')
                             continue
 

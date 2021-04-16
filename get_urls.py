@@ -29,12 +29,12 @@ def get_urls(url):
             req = requests.get(jump_urls[0])
             if len(re.findall(r"(?=https.*).*jpg", req.text)) > 0:
                 listurls = re.findall(r"(?=https.*).*jpg", req.text)
-                listurls = random.sample(listurls, 3)
+                # listurls = random.sample(listurls, 3)
             elif len(re.findall(r"/.*jpg", req.text)) > 0:
                 listurls = []
                 for i in re.findall(r"/.*jpg", req.text):
                     listurls.append(website + str(i))
-                listurls = random.sample(listurls, 3)
+                # listurls = random.sample(listurls, 3)
     except:
         pass
 
@@ -42,7 +42,7 @@ def get_urls(url):
     try:
         if len(re.findall(r"(?=https.*).*jpg", req.text)) > 0:
             listurls = re.findall(r"(?=https.*).*jpg", req.text)
-            listurls = random.sample(listurls, 3)
+            # listurls = random.sample(listurls, 3)
     except:
         pass
 
