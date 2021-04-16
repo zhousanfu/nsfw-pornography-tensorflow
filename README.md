@@ -1,4 +1,7 @@
-# Tensorflow Implementation of Yahoo's Open NSFW Model
+<get_urls.py> 随机返回3张图片url
+<classify_nsfw.py> 色情分类>=0.8 记录些网站
+
+## Tensorflow Implementation of Yahoo's Open NSFW Model
 
 This repository contains an implementation of [Yahoo's Open NSFW Classifier](https://github.com/yahoo/open_nsfw) rewritten in tensorflow.
 
