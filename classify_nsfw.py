@@ -66,7 +66,7 @@ class NSFW:
                         predictions = self.sess.run(self.model.predictions, feed_dict={self.model.input: image})
                         # print(float(predictions[0][1]), type(float(predictions[0][1])))
                         if float(predictions[0][1]) >= 0.8:
-                            print('------图片 = ', url, '  结果：True', )
+                            #print('------图片 = ', url, '  结果：True', )
                             data_result.append(str(d[0]) + '\tTrue')
                             continue
 
@@ -126,9 +126,10 @@ if __name__ == "__main__":
     nsfw.data_path=r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\测试网站.txt'
 
     data_result = nsfw.session_run()
+    print(data_result, type(data_result))
 
-    with open('data_result.txt', 'wb') as f:
+    with open('data_result.txt', 'w') as result:
         for i in data_result:
-            f.write(i + '\n')
-    f.close()
+            result.write(str(i) + '\n')
+    result.close()
 
