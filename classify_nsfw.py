@@ -120,10 +120,8 @@ def main(input_file):
 
 
 if __name__ == "__main__":
-    # main(sys.argv)
-    # main(r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\img\test2.jpg')
     nsfw = NSFW()
-    nsfw.data_path=r'C:\Users\Administrator\Documents\GitHub\tensorflow-open_nsfw\测试网站.txt'
+    nsfw.data_path=r'测试网站.txt'
 
     data_result = nsfw.session_run()
     print(data_result, type(data_result))
