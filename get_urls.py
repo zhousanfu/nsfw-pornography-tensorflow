@@ -5,6 +5,7 @@ import json
 import random
 
 
+
 def get_urls(url):
     
     headers = {
@@ -49,9 +50,10 @@ def get_urls(url):
     return listurls
 
 
-urls = get_urls('https://cutt.ly/Qc8hmonJavob')
-for url in urls:
-    res = requests.get(url, timeout=5)
-    with open('img/text.jpg', 'wb') as f:
-        f.write(res.content)
-    f.close()
+
+if __name__ == "__main__":
+    data_txt = pd.read_table('测试网站.txt', sep='\t', header=None).values.tolist()
+
+    for url in data_txt:
+        listurls = get_urls(str(url[0]))
+        print('网站=', url[0], '图片url:', len(listurls))
