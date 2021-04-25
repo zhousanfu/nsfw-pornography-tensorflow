@@ -1,6 +1,34 @@
-<get_urls.py> 随机返回3张图片url
-
-<classify_nsfw.py> 色情分类>=0.8 记录些网站
+## 对网站的所有图片作色情打分，计算占比
+```
+nsfw_pornography_tensorflow 结构树
+│  classify_nsfw.py                    # 主程序，网站中：色情图片（色情分类>=0.8）/图片总量
+│  data_result.txt              
+│  get_urls.py                         # 获取网站全部图片
+│  image_utils.py
+│  model.py
+│  README.md
+│  requirements.txt
+│  测试网站.txt
+│
+├─.vscode
+│      settings.json
+│
+├─data
+│      open_nsfw-weights.npy
+│
+├─eval
+│      batch_classify.py
+│      eval.py
+│
+├─img
+│      text.jpg
+│
+├─tools
+│      create_predict_request.py
+│      export_graph.py
+│      export_savedmodel.py
+│      export_tflite.py
+```
 
 ## Tensorflow Implementation of Yahoo's Open NSFW Model
 
